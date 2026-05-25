@@ -1,159 +1,136 @@
 # YouTube Video Summarizer
 
-**Paste a YouTube URL. Get a summary, five key takeaways, and five questions — in seconds.**
+Paste a YouTube URL. Get a summary, five key takeaways, and five questions - in seconds.
 
-[![Live Demo](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://your-app.streamlit.app)
-&nbsp;
-![Python](https://img.shields.io/badge/Python-3.11-blue)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.35-red)
-![Gemini](https://img.shields.io/badge/Google%20Gemini-AI-orange)
-
----
-
-## What Is This?
-
-This is a web app that turns any YouTube video into a structured, readable summary — without you having to watch a single second of it.
-
-You paste a link. The app reads the video's transcript and uses Google's Gemini AI to give you:
-
-- A **3–5 sentence summary** of what the video is about
-- **5 key takeaways** — the most important points
-- **5 questions** you could ask to explore the topic further
-
-It works on tutorials, lectures, conference talks, podcasts, documentaries — anything with captions.
+[![Python](https://img.shields.io/badge/Python-3.11-blue)](https://python.org)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.35-red)](https://streamlit.io)
+[![Groq](https://img.shields.io/badge/Groq-Llama3-orange)](https://groq.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 ---
 
-## Why I Built This
+## What it does
 
-As someone applying for AI engineering roles, I wanted to build something that demonstrates how Large Language Models (LLMs) can be used practically to save people time.
+Paste any YouTube link. The app grabs the video transcript and uses an LLM to give you:
 
-The problem: YouTube has millions of hours of educational content, but most people don't have hours to spend watching videos before knowing if they're worth it. A quick AI-generated summary changes that — you can decide in 30 seconds whether a video is worth your time, or extract the key ideas without watching.
+- A 3-5 sentence summary of what the video is about
+- 5 key takeaways - the most important points
+- 5 questions you could ask to explore the topic further
 
-This project shows:
-
-- How to extract and process real-world data (video transcripts) from an API
-- How to engineer effective prompts to get structured, useful output from an LLM
-- How to build a clean, user-facing web interface around an AI model
-- How to deploy a production-ready AI app on a free cloud platform
+It works on tutorials, lectures, conference talks, podcasts - anything with captions. The whole thing takes about 5-15 seconds.
 
 ---
 
-## Tech Stack
+## Why I built this
 
-| Layer | Technology | Why |
+YouTube has a huge amount of useful content, but you often can't tell if a video is worth watching until you're 20 minutes in. This lets you check in 30 seconds - paste the link, read the summary, decide.
+
+---
+
+## Tech stack
+
+| Layer | Tool | Why |
 |---|---|---|
-| UI / Frontend | Streamlit | Fast to build, looks professional, ideal for AI demos |
-| AI / LLM | Google Gemini 1.5 Flash | Free tier, fast, handles long transcripts well |
-| Transcript extraction | youtube-transcript-api | Reliable, no YouTube API key needed |
-| Environment management | python-dotenv | Keeps API keys safe and out of source code |
-| Deployment | Streamlit Cloud | Free, one-click deploy from GitHub |
+| UI | Streamlit | Fast to build, easy to use |
+| LLM | Groq (Llama 3.1 / 3.3) | Free API, very fast inference |
+| Transcript | youtube-transcript-api | Pulls captions directly, no YouTube API key needed |
+| Config | python-dotenv | Keeps API keys out of the code |
+| Deployment | Streamlit Cloud | Free, deploys straight from GitHub |
+
+Total cost: $0
 
 ---
 
-## How It Works (Plain English)
+## How it works
 
-1. **You paste a YouTube URL** into the text box.
-2. The app **extracts the video ID** from the URL (it handles all common YouTube URL formats).
-3. It **downloads the transcript** directly from YouTube's caption system — no video is downloaded, just the text.
-4. That transcript is **sent to Google Gemini** with a carefully crafted prompt that asks for a summary, takeaways, and questions in a specific format.
-5. Gemini's response is **displayed back to you** in a clean, readable layout.
-6. You can **download the result** as a text file.
-
-The whole process takes about 5–15 seconds depending on the video length.
+1. You paste a YouTube URL
+2. The app pulls out the video ID and fetches the transcript from YouTube's caption system
+3. The transcript goes to Groq (Llama 3) with a prompt asking for a summary, takeaways, and questions
+4. The result comes back and is displayed in a clean layout
+5. You can download the output as a text file
 
 ---
 
-## How to Run Locally
+## Run it locally
 
-### Prerequisites
+**Step 1 - Get a free Groq API key**
 
-- Python 3.10 or higher
-- A free Google Gemini API key ([get one here](https://aistudio.google.com/app/apikey) — no credit card needed)
+Go to [console.groq.com](https://console.groq.com), sign up (no card needed), grab an API key.
 
-### Steps
+**Step 2 - Clone and install**
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/youtube-video-summarizer.git
+git clone https://github.com/maroofwarsi/youtube-video-summarizer.git
 cd youtube-video-summarizer
 
-# 2. Create and activate a virtual environment
 python -m venv venv
-source venv/bin/activate        # Mac/Linux
-venv\Scripts\activate           # Windows
+venv\Scripts\activate        # Windows
+source venv/bin/activate     # Mac/Linux
 
-# 3. Install dependencies
 pip install -r requirements.txt
+```
 
-# 4. Set up your API key
+**Step 3 - Add your key**
+
+```bash
 cp .env.example .env
-# Open .env and replace "your_gemini_api_key_here" with your actual key
+# Open .env and add your Groq key
+```
 
-# 5. Run the app
+**Step 4 - Run**
+
+```bash
 streamlit run app.py
 ```
 
-The app will open at `http://localhost:8501` in your browser.
+Opens at [http://localhost:8501](http://localhost:8501).
 
 ---
 
-## Deploying to Streamlit Cloud (Free)
+## Deploy to Streamlit Cloud (free)
 
-1. Push this repository to GitHub (see the deployment guide below)
+1. Push this repo to GitHub
 2. Go to [share.streamlit.io](https://share.streamlit.io) and sign in with GitHub
-3. Click **New app** → select your repo → set main file to `app.py`
-4. Under **Advanced settings → Secrets**, add:
+3. New app -> select your repo -> main file: `app.py`
+4. Under Advanced settings -> Secrets, add:
    ```
-   GEMINI_API_KEY = "your_actual_key_here"
+   GROQ_API_KEY = "your_actual_key_here"
    ```
-5. Click **Deploy** — your app will be live in about 2 minutes
+5. Click Deploy - live in about 2 minutes
 
 ---
 
-## Project Structure
+## Project structure
 
 ```
 youtube-video-summarizer/
-├── app.py                  # Main application — all logic and UI
-├── requirements.txt        # Python dependencies
-├── .env.example            # Template for local API key setup
-├── .gitignore              # Keeps secrets and junk out of Git
+├── app.py              # All the logic and UI in one file
+├── requirements.txt    # Dependencies
+├── .env.example        # API key template
+├── .gitignore
 ├── .streamlit/
-│   └── config.toml         # App theme (dark mode, YouTube red)
-└── README.md               # This file
+│   └── config.toml     # App theme
+└── README.md
 ```
 
 ---
 
 ## Limitations
 
-- Videos must have captions enabled. Most educational content does; some music videos and live streams don't.
-- Very long videos (3+ hours) will have their transcripts trimmed to fit the AI's context window. The summary will still be accurate for the majority of content.
-- The app uses Gemini's free tier — rate limits apply if you're making many requests in a short time.
+- The video needs captions. Most tutorials, talks, and lectures have them. Some music videos and live streams don't.
+- Very long videos (3+ hours) get their transcript trimmed to fit the model's context window - the summary will still cover the main content.
+- Uses Groq's free tier, so there are rate limits if you're making a lot of requests quickly.
 
 ---
 
-## Skills Demonstrated
+## Also see
 
-This project was built to demonstrate practical AI engineering skills relevant to a professional role:
-
-- **Prompt engineering** — designing a structured prompt that consistently returns well-formatted, useful output
-- **API integration** — connecting two external services (YouTube + Gemini) with proper error handling
-- **User experience thinking** — handling edge cases gracefully (no transcript, private video, bad URL) with clear error messages
-- **Clean Python code** — modular functions, type hints, docstrings
-- **Cloud deployment** — shipping a real, publicly accessible app for free
-
----
-
-## Author
-
-Built by **M** as part of a portfolio of AI engineering projects.
-
-- **Also see:** [Job vs CV Analyser](https://github.com/YOUR_USERNAME/job-cv-analyser) — another project that uses AI to compare a job description against a CV and score how well they match.
+- [DataChat](https://github.com/maroofwarsi/datachat) - ask questions about any CSV or Excel file in plain English
+- [DocChat](https://github.com/maroofwarsi/dochat) - ask questions about any PDF and get cited answers
+- [CV Analyzer](https://github.com/maroofwarsi/cv-analyzer) - compare a CV against a job description and get a match score
 
 ---
 
 ## License
 
-MIT — free to use, fork, and build on.
+MIT
